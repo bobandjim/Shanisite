@@ -29,11 +29,12 @@
     <!-- Replace src values with your own images -->
     <!-- You can duplicate or generate these -->
     <script>
-      for (let i = 1; i <= 50; i++) {
-        document.write(
-          `<img src="https://via.placeholder.com/800x600?text=Image+${i}" id="img-${i}">`
-        );
-      }
+  for (let i = 1; i <= 50; i++) {
+    const num = String(i).padStart(2, "0");
+    document.write(
+      `<img src="images/img${num}.webp" id="img-${i}" loading="lazy">`
+    );
+  }
     </script>
   </div>
 
