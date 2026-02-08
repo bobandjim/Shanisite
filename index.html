@@ -36,6 +36,10 @@
       z-index: 9999;
       pointer-events: none;
       line-height: 1.6;
+      display: none; /* Hidden by default */
+    }
+    #debug-overlay.visible {
+      display: block;
     }
     #debug-overlay .speed {
       font-size: 24px;
@@ -108,6 +112,38 @@
     const statusDisplay = document.getElementById('status-display');
     
     thresholdDisplay.textContent = SPEED_THRESHOLD;
+    
+    // --- Triple-tap to toggle debug overlay ---
+    let tapCount = 0;
+    let tapTimeout = null;
+    const debugOverlay = document.getElementById('debug-overlay');
+    
+    // Wait for first image to load, then add tap listener
+    window.addEventListener('load', () => {
+      const firstImage = document.getElementById('img-1');
+      if (firstImage) {
+        firstImage.style.pointerEvents = 'auto'; // Enable pointer events on first image
+        
+        firstImage.addEventListener('click', (e) => {
+          tapCount++;
+          
+          if (tapCount === 1) {
+            // Start timeout for triple-tap detection
+            tapTimeout = setTimeout(() => {
+              tapCount = 0; // Reset if not triple-tapped in time
+            }, 500); // 500ms window for triple-tap
+          } else if (tapCount === 3) {
+            // Triple-tap detected!
+            clearTimeout(tapTimeout);
+            tapCount = 0;
+            
+            // Toggle debug overlay
+            debugOverlay.classList.toggle('visible');
+            console.log('Debug overlay toggled');
+          }
+        });
+      }
+    });
     
     window.addEventListener("scroll", () => {
       // Only snap once per page load
