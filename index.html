@@ -21,9 +21,40 @@
       aspect-ratio: 4 / 3;
       object-fit: cover;
     }
+    
+    /* Debug overlay */
+    #debug-overlay {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      background: rgba(0, 0, 0, 0.8);
+      color: #0f0;
+      padding: 15px;
+      font-family: monospace;
+      font-size: 14px;
+      border-radius: 8px;
+      z-index: 9999;
+      pointer-events: none;
+      line-height: 1.6;
+    }
+    #debug-overlay .speed {
+      font-size: 24px;
+      font-weight: bold;
+      color: #fff;
+    }
+    #debug-overlay .triggered {
+      color: #ff0;
+    }
   </style>
 </head>
 <body>
+  <div id="debug-overlay">
+    <div>Scroll Speed Monitor</div>
+    <div class="speed" id="speed-display">0.00</div>
+    <div>Threshold: <span id="threshold-display">0.5</span></div>
+    <div id="status-display"></div>
+  </div>
+  
   <div class="gallery" id="gallery">
     <script>
   const TARGET_IMAGE = 27;
@@ -62,19 +93,34 @@
     let scrollTimeout = null;
   
     // TARGET_IMAGE already declared above - reuse it
-    const SPEED_THRESHOLD = 12; // Sensitivity (lower = easier to trigger)
+    const SPEED_THRESHOLD = 0.5; // Sensitivity (lower = easier to trigger)
     const DELAY_MS = 150;        // Wait for scroll to finish before snapping
     
     console.log('Scroll snap initialized');
     
+    // Get debug display elements
+    const speedDisplay = document.getElementById('speed-display');
+    const thresholdDisplay = document.getElementById('threshold-display');
+    const statusDisplay = document.getElementById('status-display');
+    
+    thresholdDisplay.textContent = SPEED_THRESHOLD;
+    
     window.addEventListener("scroll", () => {
       // Only snap once per page load
-      if (hasSnapped) return;
+      if (hasSnapped) {
+        statusDisplay.textContent = '✅ Already snapped';
+        statusDisplay.className = '';
+        return;
+      }
       
       const now = Date.now();
       const deltaY = Math.abs(window.scrollY - lastScrollY);
       const deltaTime = now - lastTime || 1;
       const speed = deltaY / deltaTime;
+      
+      // Update on-screen display
+      speedDisplay.textContent = speed.toFixed(2);
+      speedDisplay.style.color = speed > SPEED_THRESHOLD ? '#ff0' : '#fff';
       
       console.log('Scroll detected - Speed:', speed.toFixed(2), 'Threshold:', SPEED_THRESHOLD);
       
@@ -88,6 +134,8 @@
       // Detect fast scroll
       if (speed > SPEED_THRESHOLD) {
         console.log('🎯 Fast scroll detected! Snapping immediately');
+        statusDisplay.textContent = '🎯 SNAPPING!';
+        statusDisplay.className = 'triggered';
         
         const target = document.getElementById(`img-${TARGET_IMAGE}`);
         if (target && !hasSnapped) {
@@ -102,6 +150,8 @@
         } else {
           console.log('❌ Target not found or already snapped');
         }
+      } else {
+        statusDisplay.textContent = '';
       }
     });
   </script>
