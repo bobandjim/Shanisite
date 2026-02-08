@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Scrollable Gallery Trick</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Scrollable Image Gallery</title>
 
   <style>
     body {
       margin: 0;
       background: #111;
-      font-family: sans-serif;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
     }
 
     .gallery {
@@ -20,64 +20,26 @@
       width: 100%;
       display: block;
       margin-bottom: 40px;
+
+      /* Keeps scroll physics consistent */
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
     }
   </style>
 </head>
 <body>
 
   <div class="gallery" id="gallery">
-    <!-- Replace src values with your own images -->
-    <!-- You can duplicate or generate these -->
- 
-<script>
-  for (let i = 1; i <= 50; i++) {
-    const num = String(i).padStart(3, "0"); // 001, 002, etc
-    document.write(
-      `<img src="images/IMG_${num}.WEBP" id="img-${i}" loading="lazy">`
-    );
-  }
-</script>
-
-
-
-
+    <script>
+      // Load 50 images named IMG_001.WEBP → IMG_050.WEBP
+      for (let i = 1; i <= 50; i++) {
+        const num = String(i).padStart(3, "0"); // 001, 002, etc
+        document.write(
+          `<img src="images/IMG_${num}.WEBP" id="img-${i}" loading="lazy">`
+        );
+      }
+    </script>
   </div>
 
   <script>
-    let lastScrollY = window.scrollY;
-    let lastTime = Date.now();
-    let triggered = false;
-
-    const TARGET_IMAGE = 27; // 🔮 change this to your chosen image
-    const SPEED_THRESHOLD = 3; // tweak sensitivity
-
-    window.addEventListener("scroll", () => {
-      const now = Date.now();
-      const deltaY = Math.abs(window.scrollY - lastScrollY);
-      const deltaTime = now - lastTime;
-
-      const speed = deltaY / deltaTime; // pixels per ms
-
-      lastScrollY = window.scrollY;
-      lastTime = now;
-
-      // Fast flick detected
-      if (speed > SPEED_THRESHOLD && !triggered) {
-        triggered = true;
-
-        const target = document.getElementById(`img-${TARGET_IMAGE}`);
-        target.scrollIntoView({
-          behavior: "smooth",
-          block: "center"
-        });
-
-        // Reset trigger after scroll settles
-        setTimeout(() => {
-          triggered = false;
-        }, 1000);
-      }
-    });
-  </script>
-
-</body>
-</html>
+    // --- Scroll
