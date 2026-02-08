@@ -37,9 +37,23 @@
 </script>
   </div>
   <script>
-    // --- Force scroll to top on page load ---
+    // --- Force scroll to top on page load (iOS Safari fix) ---
     window.history.scrollRestoration = 'manual';
+    
+    // Immediately scroll to top
     window.scrollTo(0, 0);
+    
+    // Force scroll again after DOM loads (catches iOS Safari)
+    document.addEventListener('DOMContentLoaded', () => {
+      window.scrollTo(0, 0);
+    });
+    
+    // Final failsafe after everything loads
+    window.addEventListener('load', () => {
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+      }, 0);
+    });
     
     // --- Scroll snap logic ---
     let lastScrollY = window.scrollY;
