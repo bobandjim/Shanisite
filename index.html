@@ -58,45 +58,42 @@
     // --- Scroll snap logic ---
     let lastScrollY = window.scrollY;
     let lastTime = Date.now();
-    let isSnapping = false; // Prevent multiple snaps at once
-    let snapTimeout = null;
+    let hasSnapped = false; // Only snap once per session
+    let scrollTimeout = null;
   
     const TARGET_IMAGE = 27;     // 🔮 Image number to snap to
-    const SPEED_THRESHOLD = 1;   // Sensitivity (lower = easier to trigger)
+    const SPEED_THRESHOLD = 0.5; // Sensitivity (lower = easier to trigger)
+    const DELAY_MS = 150;        // Wait for scroll to finish before snapping
     
     window.addEventListener("scroll", () => {
-      // Don't detect speed while we're actively snapping
-      if (isSnapping) return;
+      // Only snap once per page load
+      if (hasSnapped) return;
       
       const now = Date.now();
       const deltaY = Math.abs(window.scrollY - lastScrollY);
       const deltaTime = now - lastTime || 1;
       const speed = deltaY / deltaTime;
       
+      // Update tracking
       lastScrollY = window.scrollY;
       lastTime = now;
       
-      // Detect fast flick
+      // Clear existing timeout
+      if (scrollTimeout) clearTimeout(scrollTimeout);
+      
+      // Detect fast scroll
       if (speed > SPEED_THRESHOLD) {
-        const target = document.getElementById(`img-${TARGET_IMAGE}`);
-        if (target) {
-          // Clear any pending snap
-          if (snapTimeout) clearTimeout(snapTimeout);
-          
-          isSnapping = true;
-          
-          snapTimeout = setTimeout(() => {
+        // Wait for scrolling to settle, then snap
+        scrollTimeout = setTimeout(() => {
+          const target = document.getElementById(`img-${TARGET_IMAGE}`);
+          if (target && !hasSnapped) {
+            hasSnapped = true;
             target.scrollIntoView({
               behavior: "smooth",
               block: "center"
             });
-            
-            // Reset snapping flag after scroll completes
-            setTimeout(() => {
-              isSnapping = false;
-            }, 1000);
-          }, 80);
-        }
+          }
+        }, DELAY_MS);
       }
     });
   </script>
