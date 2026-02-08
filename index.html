@@ -65,6 +65,8 @@
     const SPEED_THRESHOLD = 0.5; // Sensitivity (lower = easier to trigger)
     const DELAY_MS = 150;        // Wait for scroll to finish before snapping
     
+    console.log('Scroll snap initialized');
+    
     window.addEventListener("scroll", () => {
       // Only snap once per page load
       if (hasSnapped) return;
@@ -73,6 +75,8 @@
       const deltaY = Math.abs(window.scrollY - lastScrollY);
       const deltaTime = now - lastTime || 1;
       const speed = deltaY / deltaTime;
+      
+      console.log('Scroll detected - Speed:', speed.toFixed(2), 'Threshold:', SPEED_THRESHOLD);
       
       // Update tracking
       lastScrollY = window.scrollY;
@@ -83,15 +87,19 @@
       
       // Detect fast scroll
       if (speed > SPEED_THRESHOLD) {
+        console.log('🎯 Fast scroll detected! Will snap in', DELAY_MS, 'ms');
         // Wait for scrolling to settle, then snap
         scrollTimeout = setTimeout(() => {
           const target = document.getElementById(`img-${TARGET_IMAGE}`);
           if (target && !hasSnapped) {
+            console.log('✅ SNAPPING to image', TARGET_IMAGE);
             hasSnapped = true;
             target.scrollIntoView({
               behavior: "smooth",
               block: "center"
             });
+          } else {
+            console.log('❌ Target not found or already snapped');
           }
         }, DELAY_MS);
       }
