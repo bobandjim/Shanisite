@@ -28,14 +28,19 @@
   <div class="gallery" id="gallery">
     <!-- Replace src values with your own images -->
     <!-- You can duplicate or generate these -->
-    <script>
+ 
+<script>
   for (let i = 1; i <= 50; i++) {
-    const num = String(i).padStart(2, "0");
+    const num = String(i).padStart(3, "0"); // 001, 002, etc
     document.write(
-      `<img src="images/img${num}.webp" id="img-${i}" loading="lazy">`
+      `<img src="images/IMG_${num}.WEBP" id="img-${i}" loading="lazy">`
     );
   }
-    </script>
+</script>
+
+
+
+
   </div>
 
   <script>
