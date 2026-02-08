@@ -31,14 +31,17 @@
 
   <div class="gallery" id="gallery">
     <script>
-      // Load 50 images named IMG_001.WEBP → IMG_050.WEBP
-      for (let i = 1; i <= 50; i++) {
-        const num = String(i).padStart(3, "0"); // 001, 002, etc
-        document.write(
-          `<img src="images/IMG_${num}.WEBP" id="img-${i}" loading="eager">`
-        );
-      }
-    </script>
+  const TARGET_IMAGE = 27;
+
+  for (let i = 1; i <= 50; i++) {
+    const num = String(i).padStart(3, "0");
+    const eager = i === TARGET_IMAGE ? 'loading="eager"' : 'loading="lazy"';
+
+    document.write(
+      `<img src="images/IMG_${num}.WEBP" id="img-${i}" ${eager}>`
+    );
+  }
+</script>
   </div>
 
   <script>
@@ -70,13 +73,14 @@
 
         const target = document.getElementById(`img-${TARGET_IMAGE}`);
         if (target) {
-          target.scrollIntoView({
-            behavior: "smooth",
-            block: "center"
-          });
-        }
+    setTimeout(() => {
+      target.scrollIntoView({
+        behavior: "smooth",
+        block: "center"
+      });
+    }, 80);
       }
-    });
+    };
   </script>
 
 </body>
