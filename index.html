@@ -35,7 +35,7 @@
       for (let i = 1; i <= 50; i++) {
         const num = String(i).padStart(3, "0"); // 001, 002, etc
         document.write(
-          `<img src="images/IMG_${num}.WEBP" id="img-${i}" loading="lazy">`
+          `<img src="images/IMG_${num}.WEBP" id="img-${i}" loading="eager">`
         );
       }
     </script>
