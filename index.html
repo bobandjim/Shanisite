@@ -49,11 +49,11 @@
 
     let snapUsed = false; // Once true, snapping is permanently disabled
 
-    const TARGET_IMAGE = 25;     // 🔮 Image number to snap to
-    const SPEED_THRESHOLD = 3; // Sensitivity (lower = easier to trigger)
+    const TARGET_IMAGE = 26;     // 🔮 Image number to snap to
+    const SPEED_THRESHOLD = 1.5; // Sensitivity (lower = easier to trigger)
 
     window.addEventListener("scroll", () => {
-      //if (snapUsed) return;
+     
 
       const now = Date.now();
       const deltaY = Math.abs(window.scrollY - lastScrollY);
@@ -64,9 +64,9 @@
       lastScrollY = window.scrollY;
       lastTime = now;
 
-      // Detect fast flick
+      Detect fast flick
       if (speed > SPEED_THRESHOLD) {
-        snapUsed = true;
+        
 
         const target = document.getElementById(`img-${TARGET_IMAGE}`);
         if (target) {
