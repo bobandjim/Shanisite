@@ -61,7 +61,7 @@
     let hasSnapped = false; // Only snap once per session
     let scrollTimeout = null;
   
-   =
+    // TARGET_IMAGE already declared above - reuse it
     const SPEED_THRESHOLD = 0.5; // Sensitivity (lower = easier to trigger)
     const DELAY_MS = 150;        // Wait for scroll to finish before snapping
     
@@ -87,21 +87,21 @@
       
       // Detect fast scroll
       if (speed > SPEED_THRESHOLD) {
-        console.log('🎯 Fast scroll detected! Will snap in', DELAY_MS, 'ms');
-        // Wait for scrolling to settle, then snap
-        scrollTimeout = setTimeout(() => {
-          const target = document.getElementById(`img-${TARGET_IMAGE}`);
-          if (target && !hasSnapped) {
-            console.log('✅ SNAPPING to image', TARGET_IMAGE);
-            hasSnapped = true;
-            target.scrollIntoView({
-              behavior: "smooth",
-              block: "center"
-            });
-          } else {
-            console.log('❌ Target not found or already snapped');
-          }
-        }, DELAY_MS);
+        console.log('🎯 Fast scroll detected! Snapping immediately');
+        
+        const target = document.getElementById(`img-${TARGET_IMAGE}`);
+        if (target && !hasSnapped) {
+          console.log('✅ SNAPPING to image', TARGET_IMAGE);
+          hasSnapped = true;
+          
+          // Snap immediately
+          target.scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+          });
+        } else {
+          console.log('❌ Target not found or already snapped');
+        }
       }
     });
   </script>
