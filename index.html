@@ -4,23 +4,19 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Scrollable Image Gallery</title>
-
   <style>
     body {
       margin: 0;
       background: #111;
       font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
     }
-
     .gallery {
       width: 100%;
     }
-
     .gallery img {
       width: 100%;
       display: block;
       margin-bottom: 40px;
-
       /* Keeps scroll physics consistent */
       aspect-ratio: 4 / 3;
       object-fit: cover;
@@ -28,60 +24,63 @@
   </style>
 </head>
 <body>
-
   <div class="gallery" id="gallery">
     <script>
   const TARGET_IMAGE = 27;
-
   for (let i = 1; i <= 50; i++) {
     const num = String(i).padStart(3, "0");
     const eager = i === TARGET_IMAGE ? 'loading="eager"' : 'loading="lazy"';
-
     document.write(
       `<img src="images/IMG_${num}.WEBP" id="img-${i}" ${eager}>`
     );
   }
 </script>
   </div>
-
   <script>
-    // --- Scroll snap logic (one-time only) ---
-
+    // --- Scroll snap logic ---
     let lastScrollY = window.scrollY;
     let lastTime = Date.now();
-
+    let isSnapping = false; // Prevent multiple snaps at once
+    let snapTimeout = null;
   
-
     const TARGET_IMAGE = 27;     // 🔮 Image number to snap to
-    const SPEED_THRESHOLD = 1; // Sensitivity (lower = easier to trigger)
-
+    const SPEED_THRESHOLD = 1;   // Sensitivity (lower = easier to trigger)
+    
     window.addEventListener("scroll", () => {
-     
-
+      // Don't detect speed while we're actively snapping
+      if (isSnapping) return;
+      
       const now = Date.now();
       const deltaY = Math.abs(window.scrollY - lastScrollY);
       const deltaTime = now - lastTime || 1;
-
       const speed = deltaY / deltaTime;
-
+      
       lastScrollY = window.scrollY;
       lastTime = now;
-
-      Detect fast flick
+      
+      // Detect fast flick
       if (speed > SPEED_THRESHOLD) {
-        
-
         const target = document.getElementById(`img-${TARGET_IMAGE}`);
         if (target) {
-    setTimeout(() => {
-      target.scrollIntoView({
-        behavior: "smooth",
-        block: "center"
-      });
-    }, 80);
+          // Clear any pending snap
+          if (snapTimeout) clearTimeout(snapTimeout);
+          
+          isSnapping = true;
+          
+          snapTimeout = setTimeout(() => {
+            target.scrollIntoView({
+              behavior: "smooth",
+              block: "center"
+            });
+            
+            // Reset snapping flag after scroll completes
+            setTimeout(() => {
+              isSnapping = false;
+            }, 1000);
+          }, 80);
+        }
       }
-    };
+    });
   </script>
-
 </body>
 </html>
