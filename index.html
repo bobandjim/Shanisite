@@ -50,7 +50,7 @@
     let snapUsed = false; // Once true, snapping is permanently disabled
 
     const TARGET_IMAGE = 27;     // 🔮 Image number to snap to
-    const SPEED_THRESHOLD = 1.5; // Sensitivity (lower = easier to trigger)
+    const SPEED_THRESHOLD = 5; // Sensitivity (lower = easier to trigger)
 
     window.addEventListener("scroll", () => {
       if (snapUsed) return;
