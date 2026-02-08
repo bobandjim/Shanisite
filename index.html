@@ -51,7 +51,8 @@
   <div id="debug-overlay">
     <div>Scroll Speed Monitor</div>
     <div class="speed" id="speed-display">0.00</div>
-    <div>Threshold: <span id="threshold-display">0.5</span></div>
+    <div>Threshold: <span id="threshold-display">6</span></div>
+    <div id="tracking-display"></div>
     <div id="status-display"></div>
   </div>
   
@@ -91,16 +92,19 @@
     let lastTime = Date.now();
     let hasSnapped = false; // Only snap once per session
     let scrollTimeout = null;
+    let inactivityTimeout = null;
   
     // TARGET_IMAGE already declared above - reuse it
     const SPEED_THRESHOLD = 6; // Sensitivity (lower = easier to trigger)
     const DELAY_MS = 150;        // Wait for scroll to finish before snapping
+    const INACTIVITY_RESET_MS = 100; // Reset tracking after this much inactivity
     
     console.log('Scroll snap initialized');
     
     // Get debug display elements
     const speedDisplay = document.getElementById('speed-display');
     const thresholdDisplay = document.getElementById('threshold-display');
+    const trackingDisplay = document.getElementById('tracking-display');
     const statusDisplay = document.getElementById('status-display');
     
     thresholdDisplay.textContent = SPEED_THRESHOLD;
@@ -121,6 +125,8 @@
       // Update on-screen display
       speedDisplay.textContent = speed.toFixed(2);
       speedDisplay.style.color = speed > SPEED_THRESHOLD ? '#ff0' : '#fff';
+      trackingDisplay.textContent = '📊 Tracking active';
+      trackingDisplay.style.color = '#0f0';
       
       console.log('Scroll detected - Speed:', speed.toFixed(2), 'Threshold:', SPEED_THRESHOLD);
       
@@ -130,6 +136,17 @@
       
       // Clear existing timeout
       if (scrollTimeout) clearTimeout(scrollTimeout);
+      
+      // Reset tracking after inactivity (prevents momentum scroll from polluting next swipe)
+      if (inactivityTimeout) clearTimeout(inactivityTimeout);
+      inactivityTimeout = setTimeout(() => {
+        // Reset tracking so next scroll starts fresh
+        lastScrollY = window.scrollY;
+        lastTime = Date.now();
+        trackingDisplay.textContent = '🔄 Tracking reset';
+        trackingDisplay.style.color = '#888';
+        console.log('📍 Tracking reset after inactivity');
+      }, INACTIVITY_RESET_MS);
       
       // Detect fast scroll
       if (speed > SPEED_THRESHOLD) {
