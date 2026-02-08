@@ -42,4 +42,42 @@
   </div>
 
   <script>
-    // --- Scroll
+    // --- Scroll snap logic (one-time only) ---
+
+    let lastScrollY = window.scrollY;
+    let lastTime = Date.now();
+
+    let snapUsed = false; // Once true, snapping is permanently disabled
+
+    const TARGET_IMAGE = 27;     // 🔮 Image number to snap to
+    const SPEED_THRESHOLD = 1.5; // Sensitivity (lower = easier to trigger)
+
+    window.addEventListener("scroll", () => {
+      if (snapUsed) return;
+
+      const now = Date.now();
+      const deltaY = Math.abs(window.scrollY - lastScrollY);
+      const deltaTime = now - lastTime || 1;
+
+      const speed = deltaY / deltaTime;
+
+      lastScrollY = window.scrollY;
+      lastTime = now;
+
+      // Detect fast flick
+      if (speed > SPEED_THRESHOLD) {
+        snapUsed = true;
+
+        const target = document.getElementById(`img-${TARGET_IMAGE}`);
+        if (target) {
+          target.scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+          });
+        }
+      }
+    });
+  </script>
+
+</body>
+</html>
